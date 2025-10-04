@@ -1,0 +1,57 @@
+# Example configuration for the job application automation bot.
+# Copy this file and adapt it to the forms you want to automate.
+
+profile:
+  full_name: Jane Doe
+  email: jane.doe@example.com
+  phone: "+1 555-0100"
+  linkedin: https://www.linkedin.com/in/janedoe
+  github: https://github.com/janedoe
+  resume: "{{ path('documents/resume.pdf') }}"
+  cover_letter: "{{ path('documents/cover_letter.pdf') }}"
+
+browser:
+  headless: true
+  timeout_ms: 15000
+  slow_mo: 50
+
+jobs:
+  - name: Example Job Board
+    url: https://example.com/careers/12345
+    steps:
+      - action: wait_for_selector
+        selector: "form.application"
+        state: visible
+      - action: fill
+        selector: "input[name='first_name']"
+        value: "{{ profile.full_name.split(' ')[0] }}"
+      - action: fill
+        selector: "input[name='last_name']"
+        value: "{{ profile.full_name.split(' ')[1] }}"
+      - action: fill
+        selector: "input[name='email']"
+        value: "{{ profile.email }}"
+      - action: fill
+        selector: "input[name='phone']"
+        value: "{{ profile.phone }}"
+      - action: fill
+        selector: "input[name='linkedin']"
+        value: "{{ profile.linkedin }}"
+      - action: fill
+        selector: "input[name='github']"
+        value: "{{ profile.github }}"
+      - action: upload
+        selector: "input[type='file'][name='resume']"
+        files: "{{ profile.resume }}"
+      - action: upload
+        selector: "input[type='file'][name='cover_letter']"
+        files: "{{ profile.cover_letter }}"
+      - action: check
+        selector: "input[name='terms']"
+        checked: true
+      - action: click
+        selector: "button[type='submit']"
+      - action: wait
+        duration_ms: 2000
+      - action: assert_text
+        text: "Thank you for applying"
